@@ -133,16 +133,17 @@ internal extension PageboyViewController {
                                                   direction: direction.layoutNormalized(isRtL: hasSelf.view.layoutIsRightToLeft).rawValue,
                                                   animated: animateUpdate,
                                                   completion: { [weak self, animated, isUsingCustomTransition, completion] (finished) in
-
-                                                        guard let hasSelf = self else {
-                                                            return
-                                                        }
-                                                        hasSelf.isUpdatingViewControllers = false
-
-                                                        if !animated || !isUsingCustomTransition {
-                                                            completion?(finished)
-                                                        }
-                                                  })
+                DispatchQueue.main.async {
+                    guard let hasSelf = self else {
+                        return
+                    }
+                    hasSelf.isUpdatingViewControllers = false
+                    
+                    if !animated || !isUsingCustomTransition {
+                        completion?(finished)
+                    }
+                }
+            })
         }
         
         // Attempt to fix issue where fast scrolling causes crash.
