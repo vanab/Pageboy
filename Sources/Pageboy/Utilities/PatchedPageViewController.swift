@@ -18,7 +18,9 @@ internal class PatchedPageViewController: UIPageViewController {
             return
         }
         isSettingViewControllers = true
+        var didCallback = false
         super.setViewControllers(viewControllers, direction: direction, animated: animated) { (isFinished) in
+            didCallback = true
             if isFinished && animated {
                 DispatchQueue.main.async {
                     super.setViewControllers(viewControllers, direction: direction, animated: false, completion: { _ in
@@ -29,6 +31,12 @@ internal class PatchedPageViewController: UIPageViewController {
                 self.isSettingViewControllers = false
             }
             completion?(isFinished)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+            if !didCallback {
+                self.isSettingViewControllers = false
+                completion?(false)
+            }
         }
     }
 }
